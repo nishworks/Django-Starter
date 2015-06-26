@@ -1,0 +1,16 @@
+Flask==0.10.1
+SQLAlchemy==1.0
+Jinja2
+Flask-Admin
+Flask-And-Redis
+Flask-SQLAlchemy
+Flask-Cache
+Flask-Login
+Flask-OAuth
+Flask-User
+Flask-Mail
+Flask-DebugToolbar
+Flask-Assets
+Flask-Babel
+Flask-Script
+Flask-RESTful
