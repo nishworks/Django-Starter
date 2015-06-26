@@ -1,4 +1,5 @@
-import setuptools,os
+import os
+import setuptools
 
 print os.path.dirname(os.path.realpath(__file__))
 #install_require = [line.strip() for line in 
@@ -7,8 +8,8 @@ print os.path.dirname(os.path.realpath(__file__))
 
 setuptools.setup(
     name='Voyage',
-      version='0.0.1',
-      description='Dashboard',
-      author='Nishant Garg',
+    version='0.0.1',
+    description='Barebone Flask App',
+    author='Nishant Garg',
     #install_require=install_require,
     )
