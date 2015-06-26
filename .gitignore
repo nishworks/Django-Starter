@@ -1,3 +1,4 @@
 .tox
 Voyage.egg-info
 .idea
+*.pyc

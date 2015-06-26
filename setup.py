@@ -2,7 +2,7 @@ import setuptools,os
 
 print os.path.dirname(os.path.realpath(__file__))
 #install_require = [line.strip() for line in 
-#                 open('pinned.txt')
+#                 open('requirements.txt')
 #                 if line.strip() and not line.strip().startswith('--')]
 
 setuptools.setup(
