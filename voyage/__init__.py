@@ -1,20 +1,27 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, render_template
+from flask_admin import Admin
+
 from voyage.api import rest_api
-from voyage import config
+from voyage.config import Config
 
 #Setup app
-voyage_app = Flask(__name__)
-voyage_app.config.from_object(config)
-voyage_app.logger.info("nishant")
+app = Flask(__name__, template_folder=Config.TEMPLATES_FOLDER)
+app.config.from_object(Config)
+
 
 #Blueprints
-voyage_app.register_blueprint(rest_api)
+app.register_blueprint(rest_api)
 
-@voyage_app.route("/")
+#Setup admin
+#voyage_admin = Admin(voyage_app, name='Voyage')
+
+
+
+@app.route("/")
 def index():
-    voyage_app.logger.info("nishant")
+    app.logger.info("nishant")
     return render_template('base.html', title="Base page")
 
 

@@ -13,6 +13,7 @@ Flask-RESTful
 Flask-Script
 Flask-SQLAlchemy
 Flask-User
+ipython
 Jinja2
 requests
 SQLAlchemy==1.0
