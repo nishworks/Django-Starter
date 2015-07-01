@@ -17,11 +17,8 @@ app.register_blueprint(rest_api)
 #Setup admin
 #voyage_admin = Admin(voyage_app, name='Voyage')
 
-
-
 @app.route("/")
 def index():
-    app.logger.info("nishant")
     return render_template('base.html', title="Base page")
 
 

@@ -8,37 +8,39 @@ from flask.ext.script import Command, Option
 from flask.ext.script import Manager
 from voyage import app
 
+APP_NAME = 'voyage:app'
+HOST = '127.0.0.1'
+PORT = 8000
+WORKERS = 1
 
 manager = Manager(app)
 
 class GunicornServer(Command):
-    """Run the app within Gunicorn"""
+    """Multi-threaded Flask server. Run the app within Gunicorn"""
 
-    def __init__(self, host='127.0.0.1', port=8000, workers=6):
-        self.port = port
-        self.host = host
-        self.workers = workers
+    def __init__(self):
+        pass
 
     def get_options(self):
         return (
             Option('-t', '--host',
                    dest='host',
-                   default=self.host),
+                   default=HOST),
 
             Option('-p', '--port',
                    dest='port',
                    type=int,
-                   default=self.port),
+                   default=PORT),
 
             Option('-w', '--workers',
                    dest='workers',
                    type=int,
-                   default=self.workers),
+                   default=WORKERS),
         )
 
     def run(self, *args, **kwargs):
         run_args = sys.argv[2:]
-        run_args.append('voyage:voyage_app')
+        run_args.append(APP_NAME)
         os.execvp('gunicorn', [''] + run_args)
 
 manager.add_command("gunicorn",GunicornServer)

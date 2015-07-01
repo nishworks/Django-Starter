@@ -17,3 +17,4 @@ ipython
 Jinja2
 requests
 SQLAlchemy==1.0
+xlrd
