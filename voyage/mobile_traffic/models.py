@@ -1,69 +1,98 @@
 # -*- coding: utf-8 -*-
 
+import operator
 from utils import *
+
+
 
 class Record():
 
-    def __init__(self, os, os_version, device_type, model, model_id, pageviews):
-        self.os = os
-        self.os_version = os_version
-        self.device_type = device_type
-        self.model = model
-        self.model_id = model_id
-        self.pageviews = pageviews
-        self.x, self.xx, self.xxx =  self.detach_os_versions(self.os_version)
+    def __init__(self, x, xx, xxx):
+        self.tablet = 0
+        self.phone = 0
+        self.pageviews = 0
+        self.x, self.xx, self.xxx = x, xx, xxx
+        self.stats = AdvancedDict()
 
-    def detach_os_versions(self, os_version):
-        x, xx, xxx = 0, 0, 0
-        splits = str(os_version).split(".")
-        sLen = len(splits)
-        if sLen > 0:
-            if splits[0].isdigit() and splits[0] != '0':
-                x = splits[0][:1]
-        if sLen > 1:
-            if splits[1].isdigit() and splits[1] != '0':
-                if splits[0].isdigit():
-                    xx = splits[1][:1]
-        if sLen > 2:
-            if splits[2].isdigit() and splits[2] != '0':
-                if splits[1].isdigit():
-                    xxx = splits[2][:1]
-        return x, xx, xxx
+    def put_stat(self, device_name, device_type, pageviews):
+        self.pageviews += pageviews
+        if device_type == 'tablet':
+            self.tablet += pageviews
+        else:
+            self.phone += pageviews
+        self.stats.put(device_name, pageviews)
 
-    def matches_x_os_version(self, x=0, xx=0, xxx=0):
-        if x != 0 and x != self.x:
+    def query(self, x=None, xx=None, xxx=None):
+        if x is not None and x != self.x:
             return False
-        if xx != 0 and self.xx != xx:
+        if xx is not None and self.xx != xx:
             return False
-        if xxx != 0 and self.xxx != xxx:
+        if xxx is not None and self.xxx != xxx:
             return False
         return True
 
-    def matches_os_verson(self, version):
-        x, xx, xxx = self.detach_os_versions(version)
-        return self.matches_x_os_version(x, xx, xxx)
+    def get_views(self, x, xx, xxx):
+        if self.query(x,xx,xxx):
+            return self.pageviews
+        return 0
 
-    def log(self):
-        "{0} : {1}".format(self.model, self.pageviews)
-
-    def get_os_version(self, precision):
-        if precision == 'x':
-            return self.x
-        elif precision == 'xx':
-            return self.x + '.' + self.xx
-        elif precision =='xxx':
-            return self.x + '.' + self.xx + '.' + self.xxx
+    def osversion(self, precision=3):
+        if precision == 1:
+            return str(self.x)
+        elif precision == 2:
+            return str(self.x) + '.' + str(self.xx)
+        elif precision == 3:
+            return str(self.x) + '.' + str(self.xx) + '.' + str(self.xxx)
         else:
             raise Exception("Record: get_os_version() method incorrectly \
             used %s is not valid precision identifier" % precision)
 
+    def process_stats(self):
+        self.sorted_stats = sorted(self.stats.storage.iteritems(),
+                            key=operator.itemgetter(1), reverse=True)
+
+
 class Storage():
 
-    def __init__(self, records, pageviews, devicetype_pageviews):
+    def __init__(self, name):
+        self.name = name
+        self.pageviews = 0
+        self.phone = 0
+        self.tablet = 0
+        self.records = dict()
+        self.devices = AdvancedDict()
+        self.devicetype = dict()
 
-        self.pageviews = pageviews
-        self.records = records
+    def add_record(self, device_name, device_type, os_version, pageviews):
+        self.pageviews += pageviews
+        x, xx, xxx, version = detach_os_versions(os_version)
+        if device_type == 'tablet':
+            self.tablet += pageviews
+            self.devicetype[device_name] = 1
+        else:
+            self.phone += pageviews
+            self.devicetype[device_name] = 0
+        if os_version not in self.records:
+            self.records[version] = Record(x, xx, xxx)
+        self.devices.put(device_name, pageviews)
+        self.records[version].put_stat(device_name, device_type, pageviews)
 
-    def query(self, os_type, os_version, global_threshold, local_threshold):
-        pass
+    def process_stats(self):
+        for r in self.records:
+            self.records[r].process_stats()
+        sorted_devices = sorted(self.devices.storage.iteritems(),
+                            key=operator.itemgetter(1), reverse=True)
+        sorted_records = sorted(self.records.values(),
+                            key=lambda record: record.pageviews, reverse=True)
+        self.devices = sorted_devices
+        self.records = sorted_records
+        """
+        for d in self.sorted_devices:
+            print " {0}  :   {1}".format(d[0], d[1])
+        for r in self.sorted_records:
+            print " {0}  :   {1}".format(r.osversion(), r.pageviews)
 
+        rr = self.records.get('4.4.2')
+        for s in rr.sorted_stats:
+            print " {0}  :   {1}".format(s[0], s[1])
+        """
