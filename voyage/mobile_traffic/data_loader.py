@@ -23,10 +23,11 @@ class ExcelFileLoader():
                 device_type = row[2]
                 os_version = row[3]
                 page_views = float(row[4])
+                store.add_record(device_name, device_type, os_version, page_views)
             except Exception as e:
                 print row
                 print e
-            store.add_record(device_name, device_type, os_version, page_views)
+
         print "{0} records: {1}     {2} pageviews".format(os_name, len(store.records), store.pageviews)
         return store
 

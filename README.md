@@ -4,5 +4,6 @@ follow best possible development tools + methodologies to keep it maintainable a
 
 
 Table of contents:
-           
+
         1. Setting up python environment - TOX
+        2. Bower for front-end depenencies.

@@ -2,3 +2,4 @@
 Voyage.egg-info
 .idea
 *.pyc
+bower_components
